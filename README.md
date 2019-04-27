@@ -1,2 +1,2 @@
 # pptk
-PowerPoint Karaoke Slides based on miroservices architecture
+PowerPoint Karaoke Slides based on microservices architecture
