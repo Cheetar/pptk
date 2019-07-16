@@ -1,0 +1,8 @@
+Flask==0.12
+SQLAlchemy==1.3.5
+Flask-SQLAlchemy==2.4.0
+python-decouple==3.1
+config==0.4.2
+boto3==1.9.188
+requests==2.22.0
+nose2==0.9.1
