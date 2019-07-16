@@ -3,6 +3,11 @@ from decouple import config
 
 import requests
 
+from decouple import config
+
+
+DEBUG = config("FLASK_DEBUG", default=False, cast=bool)
+
 SLIDES_API_URL = "http://slides/api/v1/slides/random/100"
 AWS_REGION = config("AWS_REGION", default=None, cast=str)
 BUCKET_NAME = config("BUCKET_NAME", default=None, cast=str)
@@ -38,4 +43,4 @@ def slider():
         return render_template("error.html", header="Error", message=str(e))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=80)
+    app.run(debug=DEBUG, host='0.0.0.0', port=80)

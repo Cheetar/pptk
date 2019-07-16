@@ -10,8 +10,11 @@ import cv2
 from flask import Flask, abort, request
 from keras.models import load_model
 
+from decouple import config
+
 app = Flask(__name__)
 
+DEBUG = config("FLASK_DEBUG", default=False, cast=bool)
 
 DOWNLOADED_IMAGE_PATH = "images"
 TOKEN_LEN = 15
@@ -79,4 +82,4 @@ def verify():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=80)
+    app.run(debug=DEBUG, host='0.0.0.0', port=80)
