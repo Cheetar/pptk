@@ -1,0 +1,91 @@
+version: '3.6'
+
+services:
+   front:
+     build:
+        context: ./front
+        cache_from:
+           - python3.5
+     image: front:0.0.1
+     container_name: front
+     restart: always
+     deploy:
+        replicas: 3
+        restart_policy:
+           condition: any
+           delay: 5s
+           max_attempts: 3
+           window: 30s
+        resources:
+           limits:
+             cpus: '0.1'
+             memory: 50M
+           reservations:
+             cpus: '0.01'
+             memory: 10M
+     healthcheck:
+        test: ["CMD", "curl", "-f", "http://front"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
+        start_period: 40s
+     ports:
+       - "80:80"
+
+   verifier:
+     build:
+        context: ./verifier
+        cache_from:
+           - python3.5
+     image: verifier:0.0.1
+     container_name: verifier
+     deploy:
+        replicas: 3
+        restart_policy:
+           condition: any
+           delay: 5s
+           max_attempts: 3
+           window: 30s
+        resources:
+           limits:
+             cpus: '0.1'
+             memory: 50M
+           reservations:
+             cpus: '0.01'
+             memory: 10M
+     healthcheck:
+        test: ["CMD", "curl", "-f", "http://verifier/api/v1/verify?image=https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
+        start_period: 40s
+     restart: always
+
+   slides:
+     build:
+        context: ./slides
+        cache_from:
+           - python3.5
+     image: slides:0.0.1
+     container_name: slides
+     deploy:
+        replicas: 3
+        restart_policy:
+           condition: any
+           delay: 5s
+           max_attempts: 3
+           window: 30s
+        resources:
+           limits:
+             cpus: '0.1'
+             memory: 50M
+           reservations:
+             cpus: '0.01'
+             memory: 10M
+     healthcheck:
+        test: ["CMD", "curl", "-f", "http://slides/api/v1/slides/random/3"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
+        start_period: 40s
+     restart: always    
