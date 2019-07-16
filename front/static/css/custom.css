@@ -1,0 +1,55 @@
+body {
+  font-family: 'Oxygen Mono';
+}
+
+.masthead {
+  background: linear-gradient(to bottom, rgba(22, 22, 22, 0.1) 0%, rgba(22, 22, 22, 0.5) 75%, #161616 100%), url("../img/background.jpg");
+  background-position: 100% 25%;
+  background-size: cover;
+}
+
+.title {
+  float: left;
+}
+
+.title h1 {
+  font-family: 'Source Code Pro';
+  color: #fff;
+  font-size: 2rem;
+  line-height: 3rem;
+  padding: 50px;
+  text-align: left;
+  letter-spacing: 0px;
+  font-weight: bold;
+}
+
+.title h2 {
+  max-width: none;
+  font-size: 1.5rem;
+  color: rgba(255,255,255,0.5) !important;
+  text-align: left;
+}
+
+.btn-primary {
+  background-color: #ffe719;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 2rem;
+}
+
+.btn-primary:hover {
+  background-color: #c4b215;
+}
+
+.btn-primary:focus {
+  background-color: #c4b215;
+}
+
+.btn-primary:active {
+  background-color: #ffe719 !important;
+}
+
+#mainNav .navbar-toggler {
+  color: #000;
+  border: 1px solid #333;
+}
