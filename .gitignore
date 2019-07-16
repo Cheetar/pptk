@@ -114,6 +114,7 @@ venv.bak/
 /slides/venv
 /slides/.env
 /slides/application/slides.db
+/slides/application/test.db
 
 # General
 rootkey.csv
