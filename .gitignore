@@ -102,3 +102,18 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Verifier
+/verifier/venv
+/verifier/images/*
+
+# Front
+/front/venv/
+
+# Slides
+/slides/venv
+/slides/.env
+/slides/application/slides.db
+
+# General
+rootkey.csv
