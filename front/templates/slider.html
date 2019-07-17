@@ -23,6 +23,8 @@
 			link.href = window.location.search.match( /print-pdf/gi ) ? "{{ url_for('static', filename='slider/reveal.js/css/print/pdf.css') }}" : "{{ url_for('static', filename='slider/reveal.js/css/print/paper.css') }}";
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
+
+		{% include 'ga_snippet.html' %}
 	</head>
 	<body>
 		<div class="reveal">

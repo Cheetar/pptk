@@ -6,17 +6,29 @@ import requests
 from decouple import config
 
 
-DEBUG = config("FLASK_DEBUG", default=False, cast=bool)
+FLASK_DEBUG = config("FLASK_DEBUG", default=False, cast=bool)
 
 SLIDES_API_URL = "http://slides/api/v1/slides/random/100"
 AWS_REGION = config("AWS_REGION", default=None, cast=str)
 BUCKET_NAME = config("BUCKET_NAME", default=None, cast=str)
+
+GA_TRACKING_CODE = config("GA_TRACKING_CODE", default=None, cast=str)
 
 app = Flask(__name__)
 
 def fetch_slides():
     # Send HTTP request to slides microservice for slides
     return requests.get(SLIDES_API_URL).json()
+
+@app.context_processor
+def inject_ga_tracking_code():
+    """ Adds ga_tracking_code for every template. """
+    return dict(ga_tracking_code=GA_TRACKING_CODE)
+
+@app.context_processor
+def inject_debug():
+    """ Adds debug information for every template. """
+    return dict(debug=FLASK_DEBUG)
 
 @app.errorhandler(404)
 def not_found(e):
@@ -43,4 +55,4 @@ def slider():
         return render_template("error.html", header="Error", message=str(e))
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG, host='0.0.0.0', port=80)
+    app.run(debug=FLASK_DEBUG, host='0.0.0.0', port=80)

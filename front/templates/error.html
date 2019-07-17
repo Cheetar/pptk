@@ -1,11 +1,19 @@
-<!doctype html>
-<title>PPTK - error occured</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <title>PPTK - error occured</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-<header>
-    <h1>{{header}}</h1>
-</header>
+			{% include 'ga_snippet.html' %}
+  </head>
 
-<article>
-  {{message}}
-</article>
+  <body>
+      <header>
+          <h1>{{header}}</h1>
+      </header>
+    
+      <article>
+        {{message}}
+      </article>
+  </body>
+</html>
