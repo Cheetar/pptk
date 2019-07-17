@@ -24,13 +24,13 @@ services:
              cpus: '0.01'
              memory: 10M
      healthcheck:
-        test: ["CMD", "curl", "-f", "http://front"]
+        test: ["CMD", "curl", "-f", "http://front:8000"]
         interval: 1m30s
         timeout: 10s
         retries: 3
         start_period: 40s
      ports:
-       - "80:80"
+       - "80:8000"
 
    verifier:
      build:
@@ -54,7 +54,7 @@ services:
              cpus: '0.01'
              memory: 10M
      healthcheck:
-        test: ["CMD", "curl", "-f", "http://verifier/api/v1/verify?image=https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"]
+        test: ["CMD", "curl", "-f", "http://verifier:8000/api/v1/verify?image=https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"]
         interval: 1m30s
         timeout: 10s
         retries: 3
@@ -83,9 +83,9 @@ services:
              cpus: '0.01'
              memory: 10M
      healthcheck:
-        test: ["CMD", "curl", "-f", "http://slides/api/v1/slides/random/3"]
+        test: ["CMD", "curl", "-f", "http://slides:8000/api/v1/slides/random/3"]
         interval: 1m30s
         timeout: 10s
         retries: 3
         start_period: 40s
-     restart: always    
+     restart: always

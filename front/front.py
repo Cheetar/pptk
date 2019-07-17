@@ -7,7 +7,8 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 
 FLASK_DEBUG = config("FLASK_DEBUG", default=False, cast=bool)
 
-SLIDES_API_URL = "http://slides/api/v1/slides/random/100"
+SLIDES_API_URL = "http://slides:8000/api/v1/slides/random/100"
+
 AWS_REGION = config("AWS_REGION", default=None, cast=str)
 BUCKET_NAME = config("BUCKET_NAME", default=None, cast=str)
 
@@ -74,4 +75,4 @@ def slider():
 
 
 if __name__ == '__main__':
-    app.run(debug=FLASK_DEBUG, host='0.0.0.0', port=80)
+    app.run(debug=FLASK_DEBUG, host='0.0.0.0', port=8000)
