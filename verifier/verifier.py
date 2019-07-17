@@ -42,7 +42,7 @@ def get_random_filename():
 
 def download_photo(img_url, filename):
     file_path = "%s/%s/%s" % (os.getcwd(), DOWNLOADED_IMAGE_PATH, filename)
-    print(file_path)
+    app.logger.info("Downloading photo from url {0} at path {1}".format(img_url, file_path))
     f = open(file_path, 'wb')
     f.write(urllib.request.urlopen(img_url).read())
     f.close()
@@ -74,7 +74,7 @@ def get_response(image_funniness):
 def verify():
     image_url = request.args.get('image', default=None, type=str)
     if image_url is None:
-        print("Error: can't fetch image, no image url given")
+        app.logger.error("Error: can't fetch image, no image url given")
         abort(404)
 
     filename = get_random_filename()
@@ -82,13 +82,13 @@ def verify():
     try:
         download_photo(image_url, filename)
     except Exception as e:
-        print("An error occured when downloading the photo: {}".format(e))
+        app.logger.error("An error occured when downloading the photo: {}".format(e))
         abort(500)
 
     try:
         image_funniness = get_image_funniness(filename)
     except Exception as e:
-        print("An error occured when calculating the funniness of the photo: {}".format(e))
+        app.logger.error("An error occured when calculating the funniness of the photo: {}".format(e))
         abort(500)
 
     response = get_response(image_funniness)
