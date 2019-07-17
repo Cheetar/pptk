@@ -20,3 +20,4 @@ tensorflow-tensorboard==0.4.0
 Werkzeug==0.15.4
 python-decouple==3.1
 config==0.4.2
+sentry-sdk[flask]==0.10.2
