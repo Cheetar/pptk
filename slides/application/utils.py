@@ -1,17 +1,16 @@
-from functools import reduce
-from flask import current_app as app
+from urllib import request
 
 import boto3
 from botocore.exceptions import ClientError
 from decouple import UndefinedValueError, config
+from flask import current_app as app
 
-from urllib import request
 
 def get_slides_info(slides):
-    """Gets summarized information about the slides. 
+    """Gets summarized information about the slides.
 
     Parameters:
-        slides: Iterable of Slide objects 
+        slides: Iterable of Slide objects
 
     Returns:
         dictionary: contains summarized information about the slides
@@ -19,7 +18,7 @@ def get_slides_info(slides):
     slides_with_funniness = [slide for slide in slides if slide["funniness"] is not None]
     total_funniness = sum(slide["funniness"] for slide in slides_with_funniness)
     no_slides_with_funniness = len(slides_with_funniness)
-    avg_funniness = float(total_funniness)/no_slides_with_funniness if no_slides_with_funniness > 0 else 0
+    avg_funniness = float(total_funniness) / no_slides_with_funniness if no_slides_with_funniness > 0 else 0
     max_funniness = max(slide["funniness"] for slide in slides_with_funniness) if no_slides_with_funniness > 0 else 0
     min_funniness = min(slide["funniness"] for slide in slides_with_funniness) if no_slides_with_funniness > 0 else 0
 
@@ -28,6 +27,7 @@ def get_slides_info(slides):
             'max_funniness': max_funniness,
             'min_funniness': min_funniness
             }
+
 
 def put_into_s3(dest_object_name, src_data):
     """Add an object to an Amazon S3 bucket
@@ -80,6 +80,7 @@ def put_into_s3(dest_object_name, src_data):
         if isinstance(src_data, str):
             object_data.close()
     return True
+
 
 def read_data_from_url(url):
     """ Read the image data from the url

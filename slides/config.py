@@ -1,7 +1,5 @@
-from os import environ
-
-from ast import literal_eval
 from decouple import config
+
 
 class Config:
     """Set Flask configuration vars from .env file."""

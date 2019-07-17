@@ -1,15 +1,16 @@
+import json
 import os
 import unittest
 
 from application import create_app, db
 from application.models import Slide
 
-import json
-
 app = create_app()  # Dynamically create the app
 app.app_context().push()  # Push the context
 
+
 class TestAPI(unittest.TestCase):
+
     def create_slide(self, url, funniness=None):
         s = Slide(url=url, funniness=funniness)
         db.session.add(s)
@@ -45,7 +46,7 @@ class TestAPI(unittest.TestCase):
 
         r1 = json.loads(response1.get_data(as_text=True))
         r2 = json.loads(response2.get_data(as_text=True))
-        
+
         id1 = r1["id"]
         id2 = r2["id"]
 
@@ -113,7 +114,7 @@ class TestAPI(unittest.TestCase):
         url2 = "https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg"
         url3 = "https://images.pexels.com/photos/320014/pexels-photo-320014.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
         funniness1 = 0.3
-        funniness2 = 0.5 
+        funniness2 = 0.5
         funniness3 = "null"
 
         id1 = self.create_slide(url1, funniness1)
@@ -142,6 +143,7 @@ class TestAPI(unittest.TestCase):
         self.assertIn(f'"min_funniness": {funniness1}', response.get_data(as_text=True))
         self.assertIn(f'"max_funniness": {funniness2}', response.get_data(as_text=True))
         self.assertIn(f'"avg_funniness": {float(funniness1+funniness2)/2}', response.get_data(as_text=True))
+
 
 if __name__ == '__main__':
     unittest.main()

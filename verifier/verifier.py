@@ -1,16 +1,15 @@
+import json
 import os
 import random
 import string
 import urllib
-import json
 
 import numpy as np
 
 import cv2
+from decouple import config
 from flask import Flask, abort, request
 from keras.models import load_model
-
-from decouple import config
 
 app = Flask(__name__)
 
@@ -24,16 +23,19 @@ def delete_image(filename):
     file_path = "%s/%s/%s" % (os.getcwd(), DOWNLOADED_IMAGE_PATH, filename)
     os.remove(file_path)
 
+
 def get_random_filename():
     chars = string.ascii_letters + string.digits
     return ''.join(random.choice(chars) for _ in range(TOKEN_LEN))
 
+
 def download_photo(img_url, filename):
     file_path = "%s/%s/%s" % (os.getcwd(), DOWNLOADED_IMAGE_PATH, filename)
     print(file_path)
-    f = open(file_path,'wb')
+    f = open(file_path, 'wb')
     f.write(urllib.request.urlopen(img_url).read())
     f.close()
+
 
 def get_image_funniness(filename):
     file_path = "%s/%s/%s" % (os.getcwd(), DOWNLOADED_IMAGE_PATH, filename)
@@ -50,10 +52,12 @@ def get_image_funniness(filename):
 
     return funniness
 
+
 def get_response(image_funniness):
     res = {'image_funniness': image_funniness,
            'suitable_for_presentation': bool(image_funniness > 0.33)}
     return json.dumps(res)
+
 
 @app.route('/api/v1/verify')
 def verify():
