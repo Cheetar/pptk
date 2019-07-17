@@ -52,7 +52,7 @@ def slider():
     except requests.exceptions.ConnectionError:
         return render_template("error.html", header="Connection error", message="Couldn't fetch the slides, please try again later")
     except Exception as e:
-        return render_template("error.html", header="Error", message=str(e))
+        return render_template("error.html", header="Unexpected error", message=str(e))
 
 if __name__ == '__main__':
     app.run(debug=FLASK_DEBUG, host='0.0.0.0', port=80)
