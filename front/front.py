@@ -1,7 +1,9 @@
 import requests
 
+import sentry_sdk
 from decouple import config
 from flask import Flask, render_template
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 FLASK_DEBUG = config("FLASK_DEBUG", default=False, cast=bool)
 
@@ -10,6 +12,16 @@ AWS_REGION = config("AWS_REGION", default=None, cast=str)
 BUCKET_NAME = config("BUCKET_NAME", default=None, cast=str)
 
 GA_TRACKING_CODE = config("GA_TRACKING_CODE", default=None, cast=str)
+
+SENTRY_DNS = config("SENTRY_DNS", default=None, cast=str)
+
+# Log the errors to sentry
+if SENTRY_DNS and not FLASK_DEBUG:
+    # In production mode, track all errors with sentry.
+    sentry_sdk.init(
+        dsn=SENTRY_DNS,
+        integrations=[FlaskIntegration()]
+    )
 
 app = Flask(__name__)
 

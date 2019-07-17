@@ -7,13 +7,24 @@ import urllib
 import numpy as np
 
 import cv2
+import sentry_sdk
 from decouple import config
 from flask import Flask, abort, request
 from keras.models import load_model
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+SENTRY_DNS = config("SENTRY_DNS", default=None, cast=str)
+FLASK_DEBUG = config("FLASK_DEBUG", default=False, cast=bool)
+
+# Log the errors to sentry
+if SENTRY_DNS and not FLASK_DEBUG:
+    # In production mode, track all errors with sentry.
+    sentry_sdk.init(
+        dsn=SENTRY_DNS,
+        integrations=[FlaskIntegration()]
+    )
 
 app = Flask(__name__)
-
-DEBUG = config("FLASK_DEBUG", default=False, cast=bool)
 
 DOWNLOADED_IMAGE_PATH = "images"
 TOKEN_LEN = 15
@@ -86,4 +97,4 @@ def verify():
 
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG, host='0.0.0.0', port=80)
+    app.run(debug=FLASK_DEBUG, host='0.0.0.0', port=80)

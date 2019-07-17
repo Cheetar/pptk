@@ -6,3 +6,4 @@ config==0.4.2
 boto3==1.9.188
 requests==2.22.0
 nose2==0.9.1
+sentry-sdk[flask]==0.10.2
