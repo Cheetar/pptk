@@ -6,7 +6,7 @@ RUN pip install -r requirements.txt
 COPY . /code
 WORKDIR /code
 
-EXPOSE 80
+EXPOSE 8000
 
 ENTRYPOINT ["python"]
 CMD ["verifier.py"]

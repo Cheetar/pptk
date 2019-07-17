@@ -6,6 +6,6 @@ RUN pip install -r requirements.txt
 COPY . /code
 WORKDIR /code
 
-EXPOSE 80
+EXPOSE 8000
 
 CMD ["./start.sh"]
