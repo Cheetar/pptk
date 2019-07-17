@@ -1,0 +1,72 @@
+{
+  "id": "8b3c4d1a-85cc-4122-8833-f125bcb3ec5a",
+  "version": "2.0",
+  "name": "pptk",
+  "url": "http://localhost",
+  "tests": [{
+    "id": "cd67d13e-01ff-4d35-b713-e2d78bf2503d",
+    "name": "Front loading slides",
+    "commands": [{
+      "id": "ada88d3c-7b92-4b7f-8749-ab7db26d18ae",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b5da33e6-1c59-4f77-a77d-35a087b4a039",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1362x729",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "039732a3-2506-43f4-93ef-d99ec8bebdf6",
+      "comment": "Front page loaded correctly",
+      "command": "assertElementPresent",
+      "target": "css=.my-0",
+      "targets": [
+        ["css=.my-0", "css:finder"],
+        ["xpath=//body[@id='page-top']/header/div/div/div/h1", "xpath:idRelative"],
+        ["xpath=//h1", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "9f87ba12-9e83-4f5c-9de0-fce424949dc4",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn",
+      "targets": [
+        ["css=.btn", "css:finder"],
+        ["xpath=//body[@id='page-top']/header/div/div/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/slider/')]", "xpath:href"],
+        ["xpath=//div/div/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "58594697-eb99-46b5-86d9-d3ea43d0959b",
+      "comment": "",
+      "command": "verifyElementPresent",
+      "target": "id=power-point-karaoke",
+      "targets": [
+        ["id=power-point-karaoke", "id"],
+        ["css=#power-point-karaoke", "css:finder"],
+        ["xpath=//h2[@id='power-point-karaoke']", "xpath:attributes"],
+        ["xpath=//section[@id='begin']/h2", "xpath:idRelative"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'Power Point Karaoke')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "100d53e1-ef92-4b7f-9cb5-4690511ae87f",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["cd67d13e-01ff-4d35-b713-e2d78bf2503d"]
+  }],
+  "urls": ["http://localhost/"],
+  "plugins": []
+}
