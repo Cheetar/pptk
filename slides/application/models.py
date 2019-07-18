@@ -42,12 +42,13 @@ class Slide(db.Model):
         self.deleted = False
         self.s3_stored = False
 
-        try:
-            image_data = read_data_from_url(url)
-            uploaded = put_into_s3(self.id, image_data)
-            self.s3_stored = uploaded
-        except Exception as e:
-            app.logger.warning(f'Couldn\'t fetch the image from url {url}. {str(e)}')
+        if not app.testing:
+            try:
+                image_data = read_data_from_url(url)
+                uploaded = put_into_s3(self.id, image_data)
+                self.s3_stored = uploaded
+            except Exception as e:
+                app.logger.warning(f'Couldn\'t fetch the image from url {url}. {str(e)}')
 
     def __repr__(self):
         """ Represents Slide model as a json."""
