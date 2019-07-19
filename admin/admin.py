@@ -1,7 +1,14 @@
+import json
+
 import sentry_sdk
 from decouple import config
 from flask import Flask, render_template, request
+from kafka import KafkaProducer
 from sentry_sdk.integrations.flask import FlaskIntegration
+
+BOOTSTRAP_SERVERS = ALLOWED_HOSTS = config('BOOTSTRAP_SERVERS',
+                                           cast=lambda v: [s.strip() for s in v.split(',')])
+TOPIC_NAME = 'slide_fetching'
 
 FLASK_DEBUG = config("FLASK_DEBUG", default=False, cast=bool)
 SENTRY_DNS = config("SENTRY_DNS", default=None, cast=str)
@@ -19,16 +26,47 @@ if SENTRY_DNS and not FLASK_DEBUG:
 app = Flask(__name__)
 
 
-def fetch_slides_async(no_slides):
+def publish_message(producer_instance, topic_name, data):
+    """ Excepts data to be a dictionary """
+    try:
+        if not isinstance(data, dict):
+            raise ValueError
+        producer_instance.send(topic_name, value=data)  # Send the message to the queue
+        producer_instance.flush()
+    except ValueError as e:
+        app.logger.error('Error, data is expected to be a dictionary!')
+    except Exception as e:
+        app.logger.error(f'Unexpected error in publishing message. {str(e)}')
+
+
+def connect_kafka_producer():
+    _producer = None
+    try:
+        _producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+                                  api_version=(0, 10),
+                                  value_serializer=lambda x: json.dumps(x).encode('utf-8'))
+    except Exception as e:
+        app.logger.error(f'Unexpected error while connecting to Kafka. {str(e)}')
+    finally:
+        return _producer
+
+
+def request_fetching_slides(no_slides):
     """ Orders fetching of no_slides slides to spider microservice.
 
-    Inserts tickets to async queue. These tickets will pulled by spider microservice
-    later on and processed.
+    Inserts messages to kafka queue. These messages will pulled by spider
+    microservice later on and processed.
     """
+    kafka_producer = connect_kafka_producer()
+    data = {'no_slides_to_fetch': 1}
 
     for _ in range(no_slides):
-        # TODO insert slide fetch order into async queue
-        pass
+        publish_message(kafka_producer, TOPIC_NAME, data)
+
+    app.logger.info(f'Requested to fetch {no_slides} slides.')
+
+    if kafka_producer is not None:
+        kafka_producer.close()  # Close the connection
 
 
 @app.route('/')
@@ -48,7 +86,7 @@ def fetch_slides():
         return "Invalid argument!", 405
 
     try:
-        fetch_slides_async(no_slides)
+        request_fetching_slides(no_slides)
     except Exception as e:
         return f"Unexpected error occured. {str(e)}", 500
 

@@ -1,13 +1,23 @@
 version: '3.6'
 
 services:
+   kafka:
+     image: spotify/kafka
+     container_name: pptk_kafka
+     ports:
+         - 2181:2181
+         - 9092:9092
+     environment:
+         ADVERTISED_PORT: 9092
+         ADVERTISED_HOST: 192.168.1.14  # Workaround for accessing kafka queue from localhost
+
    front:
      build:
         context: ./front
         cache_from:
            - python3.7
      image: front:0.0.1
-     container_name: front
+     container_name: pptk_front
      restart: always
      deploy:
         replicas: 3
@@ -38,7 +48,7 @@ services:
         cache_from:
            - python3.5
      image: verifier:0.0.1
-     container_name: verifier
+     container_name: pptk_verifier
      deploy:
         replicas: 3
         restart_policy:
@@ -67,7 +77,7 @@ services:
         cache_from:
            - python3.7
      image: slides:0.0.1
-     container_name: slides
+     container_name: pptk_slides
      deploy:
         replicas: 3
         restart_policy:
@@ -96,7 +106,7 @@ services:
          cache_from:
             - python3.7
       image: admin:0.0.1
-      container_name: admin
+      container_name: pptk_admin
       deploy:
          replicas: 3
          restart_policy:
@@ -120,3 +130,26 @@ services:
       restart: always
       ports:
        - "8080:8000"
+
+   spider:
+     build:
+        context: ./spider
+        cache_from:
+           - python3.7
+     image: spider:0.0.1
+     container_name: pptk_spider
+     deploy:
+        replicas: 3
+        restart_policy:
+           condition: any
+           delay: 5s
+           max_attempts: 3
+           window: 30s
+        resources:
+           limits:
+             cpus: '0.1'
+             memory: 50M
+           reservations:
+             cpus: '0.01'
+             memory: 10M
+     restart: always
