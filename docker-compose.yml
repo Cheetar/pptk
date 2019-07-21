@@ -14,8 +14,6 @@ services:
    front:
      build:
         context: ./front
-        cache_from:
-           - python3.7
      image: front:0.0.1
      container_name: pptk_front
      restart: always
@@ -45,8 +43,6 @@ services:
    verifier:
      build:
         context: ./verifier
-        cache_from:
-           - python3.5
      image: verifier:0.0.1
      container_name: pptk_verifier
      deploy:
@@ -74,8 +70,6 @@ services:
    slides:
      build:
         context: ./slides
-        cache_from:
-           - python3.7
      image: slides:0.0.1
      container_name: pptk_slides
      deploy:
@@ -103,8 +97,6 @@ services:
    admin:
       build:
          context: ./admin
-         cache_from:
-            - python3.7
       image: admin:0.0.1
       container_name: pptk_admin
       deploy:
@@ -134,8 +126,6 @@ services:
    spider:
      build:
         context: ./spider
-        cache_from:
-           - python3.7
      image: spider:0.0.1
      container_name: pptk_spider
      deploy:
