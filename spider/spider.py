@@ -1,5 +1,4 @@
 import json
-import random
 
 import requests
 
@@ -8,12 +7,6 @@ from kafka import KafkaConsumer
 
 VERIFIER_URL = 'http://verifier:8000/api/v1/verify?image='
 SLIDES_URL = 'http://slides:8000/api/v1/slides'
-
-URLs = ['https://fundusz.org/wp-content/uploads/2016/09/cropped-KFnrD_logoRGB.png',
-        'https://responsivedesign.is/wp-content/uploads/2014/10/be-inspired.svg',
-        'https://fundusz.org/wp-content/uploads/2019/07/JanMadey.jpg',
-        'https://fundusz.org/wp-content/uploads/2019/07/ci-logo-poziom-SIEC-kolor-01-200x81.jpg',
-        'https://fundusz.org/wp-content/uploads/2019/06/fakap-7.gif']
 
 TOPIC_NAME = 'slide_fetching'
 BOOTSTRAP_SERVERS = config('BOOTSTRAP_SERVERS',
@@ -47,8 +40,8 @@ def get_image_funniness_data(url):
 
 def get_random_image_url():
     """ Get the url of a random image from the Internet. """
-    # TODO get the real urls from the Internet
-    return random.choice(URLs)
+    # TODO get the real urls from the Internet.
+    return "http://lorempixel.com/400/200/"
 
 
 def fetch_slide():
