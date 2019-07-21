@@ -3,6 +3,7 @@ import json
 import sentry_sdk
 from decouple import config
 from flask import Flask, render_template, request
+from flask_basicauth import BasicAuth
 from kafka import KafkaProducer
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -24,6 +25,11 @@ if SENTRY_DNS and not FLASK_DEBUG:
     )
 
 app = Flask(__name__)
+
+basic_auth = BasicAuth(app)
+
+app.config['BASIC_AUTH_USERNAME'] = config("BASIC_AUTH_USERNAME", default='pptk_slides', cast=str)
+app.config['BASIC_AUTH_PASSWORD'] = config("BASIC_AUTH_PASSWORD", default='pptk_slides', cast=str)
 
 
 def publish_message(producer_instance, topic_name, data):
@@ -70,11 +76,13 @@ def request_fetching_slides(no_slides):
 
 
 @app.route('/')
+@basic_auth.required
 def index():
     return render_template("index.html")
 
 
 @app.route('/fetch', methods=['GET', 'POST'])
+@basic_auth.required
 def fetch_slides():
     try:
         no_slides = int(request.args.get('no_slides', default=1))

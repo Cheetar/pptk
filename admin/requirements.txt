@@ -3,3 +3,4 @@ config==0.4.2
 python-decouple==3.1
 sentry-sdk[flask]==0.10.2
 kafka-python==1.4.6
+Flask-BasicAuth==0.2.0
