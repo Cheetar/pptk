@@ -29,7 +29,12 @@ app = Flask(__name__)
 
 def fetch_slides():
     """ Send HTTP request to slides microservice for slides"""
-    return requests.get(SLIDES_API_URL).json()
+    res = requests.get(SLIDES_API_URL)
+    if res.status_code == 404:
+        raise KeyError  # No slides are currently stored in slides microservice
+    elif res.status_code != 200:
+        raise RuntimeError("Invalid status code.")
+    return res.json()
 
 
 @app.context_processor
@@ -70,6 +75,10 @@ def slider():
         return render_template("error.html",
                                header="Connection error",
                                message="Couldn't fetch the slides, please try again later")
+    except KeyError as e:
+        return render_template("error.html",
+                               header="404 Not found",
+                               message="No slides are currently stored in slides microservice")
     except Exception as e:
         return render_template("error.html", header="Unexpected error", message=str(e))
 
