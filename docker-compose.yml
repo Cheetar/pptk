@@ -123,6 +123,7 @@ services:
       container_name: pptk_admin
       depends_on:
       - "spider"
+      - "kafka"
       environment:
          - BASIC_AUTH_USERNAME=${ADMIN_USERNAME}
          - BASIC_AUTH_PASSWORD=${ADMIN_PASSWORD}
@@ -158,6 +159,7 @@ services:
      depends_on:
       - "verifier"
       - "slides"
+      - "kafka"
      deploy:
         replicas: 3
         restart_policy:
