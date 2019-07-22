@@ -32,6 +32,8 @@ services:
      image: front:0.0.1
      container_name: pptk_front
      restart: always
+     depends_on:
+      - "slides"
      deploy:
         replicas: 3
         restart_policy:
@@ -87,6 +89,8 @@ services:
         context: ./slides
      image: slides:0.0.1
      container_name: pptk_slides
+     depends_on:
+      - "postgres"
      environment:
         # Values in the sqlalchemy string are: postgresql://user:password@hostname/database_name
         - SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@postgres/pptk
@@ -117,6 +121,8 @@ services:
          context: ./admin
       image: admin:0.0.1
       container_name: pptk_admin
+      depends_on:
+      - "spider"
       environment:
          - BASIC_AUTH_USERNAME=${ADMIN_USERNAME}
          - BASIC_AUTH_PASSWORD=${ADMIN_PASSWORD}
@@ -149,6 +155,9 @@ services:
         context: ./spider
      image: spider:0.0.1
      container_name: pptk_spider
+     depends_on:
+      - "verifier"
+      - "slides"
      deploy:
         replicas: 3
         restart_policy:
