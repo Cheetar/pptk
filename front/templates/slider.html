@@ -40,7 +40,7 @@
 
 				{% for slide in slides %}
 					{% if aws_region and bucket_name and slide.s3_stored %}
-						<section data-background-size="contain" data-background="http://s3.{{ aws_region }}.amazonaws.com/{{ bucket_name }}/{{ slide.id }}"></section>
+						<section data-background-size="contain" data-background="http://s3.{{ aws_region }}.amazonaws.com/{{ bucket_name }}/{{ slide.id }}">
 					{% else %}
 						<section data-background-size="contain" data-background="{{ slide.url }}">
 					{% endif %}
