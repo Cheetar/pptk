@@ -41,9 +41,15 @@ def get_random_filename():
 
 
 def download_photo(img_url, filename):
-    file_path = "%s/%s/%s" % (os.getcwd(), DOWNLOADED_IMAGE_PATH, filename)
+    directory = "%s/%s/" % (os.getcwd(), DOWNLOADED_IMAGE_PATH)
+    file_path = "%s%s" % (directory, filename)
     app.logger.info("Downloading photo from url {0} at path {1}".format(img_url, file_path))
-    f = open(file_path, 'wb')
+
+    # Create directory if doesn't exist
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    f = open(file_path, 'wb+')
     f.write(urllib.request.urlopen(img_url).read())
     f.close()
 
