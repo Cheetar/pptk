@@ -9,7 +9,7 @@ services:
          - 9092:9092
      environment:
          ADVERTISED_PORT: 9092
-         ADVERTISED_HOST: 192.168.1.14  # Workaround for accessing kafka queue from localhost
+         ADVERTISED_HOST: ${DOCKER_HOST_IP}  # For accessing kafka queue from localhost
      restart: always
      deploy:
         replicas: 1
