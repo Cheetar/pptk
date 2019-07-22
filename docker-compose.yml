@@ -114,6 +114,9 @@ services:
          context: ./admin
       image: admin:0.0.1
       container_name: pptk_admin
+      environment:
+         - BASIC_AUTH_USERNAME=${ADMIN_USERNAME}
+         - BASIC_AUTH_PASSWORD=${ADMIN_PASSWORD}
       deploy:
          replicas: 3
          restart_policy:
@@ -129,7 +132,7 @@ services:
               cpus: '0.01'
               memory: 10M
       healthcheck:
-         test: ["CMD", "curl", "-f", "http://admin:8000"]
+         test: ["CMD", "curl", "-f", "http://${ADMIN_USERNAME}:${ADMIN_PASSWORD}@admin:8000"]
          interval: 1m30s
          timeout: 10s
          retries: 3
