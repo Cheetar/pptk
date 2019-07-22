@@ -87,6 +87,9 @@ services:
         context: ./slides
      image: slides:0.0.1
      container_name: pptk_slides
+     environment:
+        # Values in the sqlalchemy string are: postgresql://user:password@hostname/database_name
+        - SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@postgres/pptk
      deploy:
         replicas: 3
         restart_policy:
@@ -161,3 +164,15 @@ services:
              cpus: '0.01'
              memory: 10M
      restart: always
+
+   postgres:
+     image: "postgres:latest"
+     container_name: pptk_postgres
+     environment:
+       - POSTGRES_PASSWORD=postgres
+       - POSTGRES_DB=pptk
+     volumes:
+       - postgres:/var/lib/postgresql/
+
+volumes:
+  postgres:
