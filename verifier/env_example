@@ -1,0 +1,5 @@
+# Flask
+FLASK_DEBUG=False
+
+# Sentry
+SENTRY_DNS="<your-sentry-dns>"

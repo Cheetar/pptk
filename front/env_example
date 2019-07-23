@@ -1,0 +1,12 @@
+# Flask
+FLASK_DEBUG=False
+
+# Amazon Web Services
+AWS_REGION="<your-aws-region>"
+BUCKET_NAME="<bucket-name-where-slides-are-stored>"
+
+# Google Analytics
+GA_TRACKING_CODE="<your-google-analytics-tracking-code>"
+
+# Sentry
+SENTRY_DNS="<your-sentry-dns>"

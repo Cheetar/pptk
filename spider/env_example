@@ -1,0 +1,3 @@
+# Kafka
+# Kafka brokers, default value is kafka:9092
+BOOTSTRAP_SERVERS=<your-kafka-brokers>

@@ -1,0 +1,13 @@
+# Flask
+FLASK_DEBUG=False
+
+# Databases
+SQLALCHEMY_TRACK_MODIFICATIONS=False
+
+# Amazon Web Services
+Access_Key_ID="<access-key-id>"
+Secret_Access_Key="<secret-access-key>"
+BUCKET_NAME="<bucket-name-for-slides-storing>"
+
+# Sentry
+SENTRY_DNS="<your-sentry-dns>"

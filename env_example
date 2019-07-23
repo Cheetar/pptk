@@ -1,0 +1,6 @@
+# Admin site
+ADMIN_USERNAME=<admin-site-username>
+ADMIN_PASSWORD=<admin-site-password>
+
+# Kafka
+DOCKER_HOST_IP=<your-machine-ip>
