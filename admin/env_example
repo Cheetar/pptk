@@ -4,6 +4,3 @@ SECRET_KEY="<your-secret-key-at-least-32-random-hex-digits>"
 
 # Sentry
 SENTRY_DNS="<your-sentry-dns>"
-
-# Kafka
-BOOTSTRAP_SERVERS=<location-of-kafka-brokers>

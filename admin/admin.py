@@ -8,6 +8,7 @@ from kafka import KafkaProducer
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 BOOTSTRAP_SERVERS = ALLOWED_HOSTS = config('BOOTSTRAP_SERVERS',
+                                           default='kafka:9092',
                                            cast=lambda v: [s.strip() for s in v.split(',')])
 TOPIC_NAME = 'slide_fetching'
 

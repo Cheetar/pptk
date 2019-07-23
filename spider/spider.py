@@ -10,6 +10,7 @@ SLIDES_URL = 'http://slides:8000/api/v1/slides'
 
 TOPIC_NAME = 'slide_fetching'
 BOOTSTRAP_SERVERS = config('BOOTSTRAP_SERVERS',
+                           default='kafka:9092',
                            cast=lambda v: [s.strip() for s in v.split(',')])
 
 
