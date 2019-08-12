@@ -1,9 +1,12 @@
 import json
-
+import os
+import random
 import requests
 
 from decouple import config
 from kafka import KafkaConsumer
+from selenium import webdriver
+
 
 VERIFIER_URL = 'http://verifier:8000/api/v1/verify?image='
 SLIDES_URL = 'http://slides:8000/api/v1/slides'
@@ -13,9 +16,26 @@ BOOTSTRAP_SERVERS = config('BOOTSTRAP_SERVERS',
                            default='kafka:9092',
                            cast=lambda v: [s.strip() for s in v.split(',')])
 
+dictionary_filename = 'assets/words.txt'
+with open(dictionary_filename, 'r') as f:
+    dictionary = f.read().split('\n')
+
+headless_options = webdriver.firefox.options.Options()
+headless_options.headless = True
+driver = webdriver.Firefox(options=headless_options)
+image_extensions = {"jpg", "jpeg", "png", "gif"}
+
+truly_random = random.SystemRandom()
+
+def extension(filename):
+    _, ext = os.path.splitext(filename)
+    if len(ext) > 0 and ext[0] == '.':
+        ext = ext[1:]
+    return ext
+
 
 def add_slide(url, image_funniness):
-    """ Call REST API of Slides microservice to add the slide. """
+    """ Call REST API of Slides microservcie to add the slide. """
     res = requests.post(SLIDES_URL, json={"url": url,
                                           'funniness': image_funniness})
     if res.status_code is not 201:
@@ -41,8 +61,17 @@ def get_image_funniness_data(url):
 
 def get_random_image_url():
     """ Get the url of a random image from the Internet. """
-    # TODO get the real urls from the Internet.
-    return "http://lorempixel.com/400/200/"
+
+    query = truly_random.choice(dictionary)
+    url = "https://www.google.co.in/search?q=" + query + "&source=lnms&tbm=isch&tbs=imgo:1,isz:lt,islt:2mp"
+
+    driver.get(url)
+    images = driver.find_elements_by_xpath('//div[contains(@class,"rg_meta")]')
+
+    urls = [json.loads(img.get_attribute('innerHTML'))["ou"] for img in images]
+    urls = [url for url in urls if extension(url) in image_extensions]
+
+    return truly_random.choice(urls)
 
 
 def fetch_slide():
@@ -82,6 +111,7 @@ def consume_message(data):
 if __name__ == '__main__':
     print('Spider starting..')
 
+
     consumer = KafkaConsumer(TOPIC_NAME,
                              auto_offset_reset='latest',
                              bootstrap_servers=BOOTSTRAP_SERVERS,
@@ -106,3 +136,4 @@ if __name__ == '__main__':
                         print(f'Error while consuming the message. {str(e)}')
     finally:
         consumer.close()
+        driver.quit()

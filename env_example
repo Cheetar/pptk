@@ -1,6 +1,25 @@
 # Admin site
-ADMIN_USERNAME=<admin-site-username>
-ADMIN_PASSWORD=<admin-site-password>
+ADMIN_USERNAME=
+ADMIN_PASSWORD=
 
 # Kafka
-DOCKER_HOST_IP=<your-machine-ip>
+DOCKER_HOST_IP=
+
+# Flask
+FLASK_DEBUG=
+SECRET_KEY=
+
+# Sentry
+SENTRY_DNS=
+
+# Databases
+SQLALCHEMY_TRACK_MODIFICATIONS=
+
+# Amazon Web Services
+Access_Key_ID=
+Secret_Access_Key=
+BUCKET_NAME=
+AWS_REGION=
+
+# Google Analytics
+GA_TRACKING_CODE=

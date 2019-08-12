@@ -62,12 +62,13 @@ def put_into_s3(dest_object_name, src_data):
         Access_Key_ID = config("Access_Key_ID")
         Secret_Access_Key = config("Secret_Access_Key")
         dest_bucket_name = config("BUCKET_NAME")
+        aws_region = config("AWS_REGION", default='eu-central-1')
     except UndefinedValueError as e:
         app.logger.error(e)
         return False
 
     # Initialize the connection
-    s3 = boto3.client('s3', aws_access_key_id=Access_Key_ID, aws_secret_access_key=Secret_Access_Key)
+    s3 = boto3.client('s3', region_name=aws_region, aws_access_key_id=Access_Key_ID, aws_secret_access_key=Secret_Access_Key)
 
     try:
         s3.put_object(Bucket=dest_bucket_name, Key=dest_object_name, Body=object_data, ACL='public-read')

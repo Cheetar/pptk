@@ -1,3 +1,4 @@
 kafka-python==1.4.6
 requests==2.22.0
 python-decouple==3.1
+selenium==3.141.0

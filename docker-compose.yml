@@ -1,171 +1,195 @@
 version: '3.6'
 
 services:
-   kafka:
-     image: spotify/kafka
-     container_name: pptk_kafka
-     ports:
-         - 2181:2181
-         - 9092:9092
-     environment:
-         ADVERTISED_PORT: 9092
-         ADVERTISED_HOST: ${DOCKER_HOST_IP}  # For accessing kafka queue from localhost
-     restart: always
-     deploy:
-        replicas: 1
-        restart_policy:
-           condition: any
-           delay: 5s
-           max_attempts: 3
-           window: 30s
-        resources:
-           reservations:
-             cpus: '0.01'
-             memory: 10M
+  kafka:
+    image: spotify/kafka
+    container_name: pptk_kafka
+    ports:
+      - 2181:2181
+      - 9092:9092
+    environment:
+      - ADVERTISED_PORT=9092
+      - ADVERTISED_HOST=${DOCKER_HOST_IP}  # For accessing kafka queue from localhost
+    restart: always
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+      resources:
+        reservations:
+          cpus: '0.01'
+          memory: 10M
 
-   front:
-     build:
-        context: ./front
-     image: front:0.0.1
-     container_name: pptk_front
-     restart: always
-     depends_on:
+
+  front:
+    build:
+      context: ./front
+    image: front:0.0.1
+    container_name: pptk_front
+    restart: always
+    depends_on:
       - "slides"
-     deploy:
-        replicas: 3
-        restart_policy:
-           condition: any
-           delay: 5s
-           max_attempts: 3
-           window: 30s
-        resources:
-           reservations:
-             cpus: '0.01'
-             memory: 10M
-     healthcheck:
-        test: ["CMD", "curl", "-f", "http://front:8000"]
-        interval: 1m30s
-        timeout: 10s
-        retries: 3
-        start_period: 40s
-     ports:
-       - "80:8000"
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+      resources:
+        reservations:
+          cpus: '0.01'
+          memory: 10M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://front:8000"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    ports:
+      - "80:8000"
+    environment:
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - AWS_REGION=${AWS_REGION}
+      - BUCKET_NAME=${BUCKET_NAME}
+      - GA_TRACKING_CODE=${GA_TRACKING_CODE}
+      - SENTRY_DNS=${SENTRY_DNS}
 
-   verifier:
-     build:
-        context: ./verifier
-     image: verifier:0.0.1
-     container_name: pptk_verifier
-     deploy:
-        replicas: 3
-        restart_policy:
-           condition: any
-           delay: 5s
-           max_attempts: 3
-           window: 30s
-        resources:
-           reservations:
-             cpus: '0.01'
-             memory: 10M
-     healthcheck:
-        test: ["CMD", "curl", "-f", "http://verifier:8000/api/v1/verify?image=https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"]
-        interval: 1m30s
-        timeout: 10s
-        retries: 3
-        start_period: 40s
-     restart: always
+  verifier:
+    build:
+      context: ./verifier
+    image: verifier:0.0.1
+    container_name: pptk_verifier
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+      resources:
+        reservations:
+          cpus: '0.01'
+          memory: 10M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://verifier:8000/api/v1/verify?image=https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: always
+    environment:
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - SENTRY_DNS=${SENTRY_DNS}
 
-   slides:
-     build:
-        context: ./slides
-     image: slides:0.0.1
-     container_name: pptk_slides
-     depends_on:
+
+  slides:
+    build:
+      context: ./slides
+    image: slides:0.0.1
+    container_name: pptk_slides
+    depends_on:
       - "postgres"
-     environment:
-        # Values in the sqlalchemy string are: postgresql://user:password@hostname/database_name
-        - SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@postgres/pptk
-     deploy:
-        replicas: 3
-        restart_policy:
-           condition: any
-           delay: 5s
-           max_attempts: 3
-           window: 30s
-        resources:
-           reservations:
-             cpus: '0.01'
-             memory: 10M
-     healthcheck:
-        test: ["CMD", "curl", "-f", "http://slides:8000/api/v1/slides/random/3"]
-        interval: 1m30s
-        timeout: 10s
-        retries: 3
-        start_period: 40s
-     restart: always
+    environment:
+      # Values in the sqlalchemy string are: postgresql://user:password@hostname/database_name
+      - SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@postgres/pptk
+      - AWS_REGION=${AWS_REGION}
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+      resources:
+        reservations:
+          cpus: '0.01'
+          memory: 10M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://slides:8000/api/v1/slides/random/3"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: always
+    environment:
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - SQLALCHEMY_TRACK_MODIFICATIONS=${SQLALCHEMY_TRACK_MODIFICATIONS}
+      - Access_Key_ID=${Access_Key_ID}
+      - Secret_Access_Key=${Secret_Access_Key}
+      - BUCKET_NAME=${BUCKET_NAME}
+      - SENTRY_DNS=${SENTRY_DNS}
 
-   admin:
-      build:
-         context: ./admin
-      image: admin:0.0.1
-      container_name: pptk_admin
-      depends_on:
+
+  admin:
+    build:
+      context: ./admin
+    image: admin:0.0.1
+    container_name: pptk_admin
+    depends_on:
       - "spider"
       - "kafka"
-      environment:
-         - BASIC_AUTH_USERNAME=${ADMIN_USERNAME}
-         - BASIC_AUTH_PASSWORD=${ADMIN_PASSWORD}
-      deploy:
-         replicas: 3
-         restart_policy:
-            condition: any
-            delay: 5s
-            max_attempts: 3
-            window: 30s
-         resources:
-            reservations:
-              cpus: '0.01'
-              memory: 10M
-      healthcheck:
-         test: ["CMD", "curl", "-f", "http://${ADMIN_USERNAME}:${ADMIN_PASSWORD}@admin:8000"]
-         interval: 1m30s
-         timeout: 10s
-         retries: 3
-         start_period: 40s
-      restart: always
-      ports:
-       - "8080:8000"
+    environment:
+      - BASIC_AUTH_USERNAME=${ADMIN_USERNAME}
+      - BASIC_AUTH_PASSWORD=${ADMIN_PASSWORD}
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - SENTRY_DNS=${SENTRY_DNS}
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+      resources:
+        reservations:
+          cpus: '0.01'
+          memory: 10M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://${ADMIN_USERNAME}:${ADMIN_PASSWORD}@admin:8000"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: always
+    ports:
+      - "8080:8000"
 
-   spider:
-     build:
-        context: ./spider
-     image: spider:0.0.1
-     container_name: pptk_spider
-     depends_on:
+
+  spider:
+    build:
+      context: ./spider
+    image: spider:0.0.1
+    container_name: pptk_spider
+    depends_on:
       - "verifier"
       - "slides"
       - "kafka"
-     deploy:
-        replicas: 3
-        restart_policy:
-           condition: any
-           delay: 5s
-           max_attempts: 3
-           window: 30s
-        resources:
-           reservations:
-             cpus: '0.01'
-             memory: 10M
-     restart: always
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 30s
+      resources:
+        reservations:
+          cpus: '0.01'
+          memory: 10M
+    restart: always
 
-   postgres:
-     image: "postgres:latest"
-     container_name: pptk_postgres
-     environment:
-       - POSTGRES_PASSWORD=postgres
-       - POSTGRES_DB=pptk
-     volumes:
-       - postgres:/var/lib/postgresql/
+  postgres:
+    image: "postgres:latest"
+    container_name: pptk_postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=pptk
+    volumes:
+      - postgres:/var/lib/postgresql/
 
 volumes:
   postgres:
