@@ -2,12 +2,12 @@ import json
 import os
 import random
 import string
-import urllib
 
 import numpy as np
 
 import cv2
 import sentry_sdk
+from urllib.request import Request, urlopen
 from decouple import config
 from flask import Flask, abort, request
 from keras.models import load_model
@@ -29,6 +29,7 @@ app = Flask(__name__)
 DOWNLOADED_IMAGE_PATH = "images"
 TOKEN_LEN = 15
 
+model = load_model("PPTK-CNN.h5")
 
 def delete_image(filename):
     file_path = "%s/%s/%s" % (os.getcwd(), DOWNLOADED_IMAGE_PATH, filename)
@@ -50,7 +51,7 @@ def download_photo(img_url, filename):
         os.makedirs(directory)
 
     with open(file_path, 'wb+') as f:
-        f.write(urllib.request.urlopen(img_url).read())
+        f.write(urlopen(Request(img_url, headers={'User-Agent' : "Magic Browser"})).read())
 
 
 def get_image_funniness(filename):
@@ -63,7 +64,6 @@ def get_image_funniness(filename):
     img = np.reshape(img, [1, 300, 300, 3])
 
     # Use neural network to predict how funny the image is
-    model = load_model("PPTK-CNN.h5")
     funniness = float(model.predict(img))
 
     return funniness
