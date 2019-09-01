@@ -45,13 +45,12 @@ def download_photo(img_url, filename):
     file_path = "%s%s" % (directory, filename)
     app.logger.info("Downloading photo from url {0} at path {1}".format(img_url, file_path))
 
-    # Create directory if doesn't exist
+    # Create directory if it doesn't exist
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    f = open(file_path, 'wb+')
-    f.write(urllib.request.urlopen(img_url).read())
-    f.close()
+    with open(file_path, 'wb+') as f:
+        f.write(urllib.request.urlopen(img_url).read())
 
 
 def get_image_funniness(filename):

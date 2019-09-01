@@ -3,7 +3,6 @@ version: '3.6'
 services:
   kafka:
     image: spotify/kafka
-    container_name: pptk_kafka
     ports:
       - 2181:2181
       - 9092:9092
@@ -28,7 +27,6 @@ services:
     build:
       context: ./front
     image: front:0.0.1
-    container_name: pptk_front
     restart: always
     depends_on:
       - "slides"
@@ -62,7 +60,6 @@ services:
     build:
       context: ./verifier
     image: verifier:0.0.1
-    container_name: pptk_verifier
     deploy:
       replicas: 3
       restart_policy:
@@ -90,7 +87,6 @@ services:
     build:
       context: ./slides
     image: slides:0.0.1
-    container_name: pptk_slides
     depends_on:
       - "postgres"
     environment:
@@ -128,7 +124,6 @@ services:
     build:
       context: ./admin
     image: admin:0.0.1
-    container_name: pptk_admin
     depends_on:
       - "spider"
       - "kafka"
@@ -164,7 +159,6 @@ services:
     build:
       context: ./spider
     image: spider:0.0.1
-    container_name: pptk_spider
     depends_on:
       - "verifier"
       - "slides"
@@ -184,7 +178,6 @@ services:
 
   postgres:
     image: "postgres:latest"
-    container_name: pptk_postgres
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=pptk

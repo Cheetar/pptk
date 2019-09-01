@@ -8,5 +8,4 @@ WORKDIR /code
 
 EXPOSE 8000
 
-ENTRYPOINT ["python"]
-CMD ["admin.py"]
+ENTRYPOINT ["python", "admin.py"]

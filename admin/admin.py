@@ -59,10 +59,10 @@ def connect_kafka_producer():
 
 
 def request_fetching_slides(no_slides):
-    """ Orders fetching of no_slides slides to spider microservice.
+    """ Orders spider microservice to fetch no_slides of slides.
 
-    Inserts messages to kafka queue. These messages will pulled by spider
-    microservice later on and processed.
+    Inserts messages to kafka queue. These messages will be pulled and processed
+    by spider microservice later on.
     """
     kafka_producer = connect_kafka_producer()
     data = {'no_slides_to_fetch': 1}
