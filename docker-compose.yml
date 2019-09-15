@@ -232,6 +232,7 @@ services:
 
       CLEAN_OVER_REWIND: 1
       CONFIGS: "max_replication_slots:10"
+    restart: always
     volumes:
       - pgslave1:/var/lib/postgresql/data
       - ./ssh:/tmp/.ssh/keys
@@ -254,6 +255,7 @@ services:
 
       CLEAN_OVER_REWIND: 1
       CONFIGS: "max_replication_slots:10"
+    restart: always
     volumes:
       - pgslave2:/var/lib/postgresql/data
       - ./ssh:/tmp/.ssh/keys
@@ -279,6 +281,7 @@ services:
       BACKENDS: "0:pgmaster::::,1:pgslave1::::,2:pgslave2::::"
       REQUIRE_MIN_BACKENDS: 2
       CONFIGS: "num_init_children:100,max_pool:4"
+    restart: always
     volumes:
       - ./ssh:/tmp/.ssh/keys
     networks:
