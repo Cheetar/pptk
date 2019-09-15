@@ -23,3 +23,6 @@ AWS_REGION=
 
 # Google Analytics
 GA_TRACKING_CODE=
+
+# Postgres
+DB_PASSWORD=

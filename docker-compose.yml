@@ -1,5 +1,14 @@
 version: '3.6'
 
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  pgmaster:
+  pgslave1:
+  pgslave2:
+
 services:
   kafka:
     image: spotify/kafka
@@ -88,10 +97,10 @@ services:
       context: ./slides
     image: slides:0.0.1
     depends_on:
-      - "postgres"
+      - "pgpool"
     environment:
       # Values in the sqlalchemy string are: postgresql://user:password@hostname/database_name
-      - SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@postgres/pptk
+      - SQLALCHEMY_DATABASE_URI=postgresql://postgres:${DB_PASSWORD}@pgpool/pptk
       - AWS_REGION=${AWS_REGION}
     deploy:
       replicas: 3
@@ -176,13 +185,103 @@ services:
           memory: 10M
     restart: always
 
-  postgres:
-    image: "postgres:latest"
+# Postgres cluster below
+  pgmaster:
+    build:
+      context: postgres_cluster
+      dockerfile: Postgres-11-Repmgr-4.0.Dockerfile
     environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=pptk
-    volumes:
-      - postgres:/var/lib/postgresql/
+      NODE_ID: 1
+      NODE_NAME: node1
+      CLUSTER_NODE_NETWORK_NAME: pgmaster
 
-volumes:
-  postgres:
+      PARTNER_NODES: "pgmaster,pgslave1,pgslave2"
+      REPLICATION_PRIMARY_HOST: pgmaster
+
+      POSTGRES_DB: pptk
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+      CLEAN_OVER_REWIND: 0
+      CONFIGS: "listen_addresses:'*',max_replication_slots:5"
+
+      CLUSTER_NAME: pg_cluster
+      REPLICATION_DB: replication_db
+      REPLICATION_USER: replication_user
+      REPLICATION_PASSWORD: replication_pass
+
+    volumes:
+      - pgmaster:/var/lib/postgresql/data
+      - ./ssh/:/tmp/.ssh/keys
+    networks:
+      default:
+        aliases:
+          - pgmaster
+
+  pgslave1:
+    build:
+      context: postgres_cluster
+      dockerfile: Postgres-11-Repmgr-4.0.Dockerfile
+    environment:
+      NODE_ID: 2
+      NODE_NAME: node2
+      CLUSTER_NODE_NETWORK_NAME: pgslave1
+
+      PARTNER_NODES: "pgmaster,pgslave1,pgslave2"
+      REPLICATION_PRIMARY_HOST: pgmaster
+
+      CLEAN_OVER_REWIND: 1
+      CONFIGS: "max_replication_slots:10"
+    volumes:
+      - pgslave1:/var/lib/postgresql/data
+      - ./ssh:/tmp/.ssh/keys
+    networks:
+      default:
+        aliases:
+          - pgslave1
+
+  pgslave2:
+    build:
+      context: postgres_cluster
+      dockerfile: Postgres-11-Repmgr-4.0.Dockerfile
+    environment:
+      NODE_ID: 3
+      NODE_NAME: node3
+      CLUSTER_NODE_NETWORK_NAME: pgslave2
+
+      PARTNER_NODES: "pgmaster,pgslave1,pgslave2"
+      REPLICATION_PRIMARY_HOST: pgmaster
+
+      CLEAN_OVER_REWIND: 1
+      CONFIGS: "max_replication_slots:10"
+    volumes:
+      - pgslave2:/var/lib/postgresql/data
+      - ./ssh:/tmp/.ssh/keys
+    networks:
+      default:
+        aliases:
+          - pgslave2
+
+  pgpool:
+    build:
+      context: postgres_cluster
+      dockerfile: Pgpool-3.7-Postgres-11.Dockerfile
+    environment:
+      PCP_USER: pcp_user
+      PCP_PASSWORD: pcp_pass
+      WAIT_BACKEND_TIMEOUT: 60
+
+      CHECK_USER: postgres
+      CHECK_PASSWORD: ${DB_PASSWORD}
+      CHECK_PGCONNECT_TIMEOUT: 3
+      DB_USERS: postgres:${DB_PASSWORD}
+
+      BACKENDS: "0:pgmaster::::,1:pgslave1::::,2:pgslave2::::"
+      REQUIRE_MIN_BACKENDS: 2
+      CONFIGS: "num_init_children:100,max_pool:4"
+    volumes:
+      - ./ssh:/tmp/.ssh/keys
+    networks:
+      default:
+        aliases:
+          - pgpool
